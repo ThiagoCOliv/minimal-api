@@ -1,7 +1,7 @@
 import fastify from "fastify";
 import cors from "@fastify/cors";
 
-interface LeagueParams { id: string; }
+interface RequestParams { id: string; }
 
 const server = fastify({ logger: true });
 server.register(cors, { origin: "*", methods: ["GET"] });
@@ -57,7 +57,7 @@ server.get("/leagues", async (request, response) => {
     return { leagues };
 });
 
-server.get<{ Params: LeagueParams }>("/leagues/:id", async (request, response) => {
+server.get<{ Params: RequestParams }>("/leagues/:id", async (request, response) => {
     const id = parseInt(request.params.id);
     const league = leagues.find((l) => l.id === id);
 
@@ -70,6 +70,23 @@ server.get<{ Params: LeagueParams }>("/leagues/:id", async (request, response) =
     {
         response.type("application/json").code(200);
         return { league };
+    }
+  }
+);
+
+server.get<{ Params: RequestParams }>("/teams/:id", async (request, response) => {
+    const id = parseInt(request.params.id);
+    const team = teams.find((t) => t.id === id);
+
+    if (!team) 
+    {
+        response.type("application/json").code(404);
+        return { message: "Team Not Found" };
+    } 
+    else 
+    {
+        response.type("application/json").code(200);
+        return { team };
     }
   }
 );
